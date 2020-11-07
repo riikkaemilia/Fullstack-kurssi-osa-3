@@ -13,6 +13,8 @@ morgan.token('data', (req, res) => {
 const skipPostMethod = (req, res) => req.method === "POST"
 const skipOtherMethodsThanPost = (req, res) => req.method !== "POST"
 
+app.use(express.static('build'))
+
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data', {
     skip: skipOtherMethodsThanPost
 }))
