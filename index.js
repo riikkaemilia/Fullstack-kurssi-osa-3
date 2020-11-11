@@ -8,6 +8,7 @@ const Person = require('./models/person')
 app.use(cors())
 app.use(express.json())
 
+// Morgan alkaa
 morgan.token('data', (req, res) => {
     return JSON.stringify(req.body);
 });
@@ -24,34 +25,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :d
 app.use(morgan('tiny', {
     skip: skipPostMethod
 }))
-
-let persons = [
-    {
-        id: 1,
-        name: "Aku Ankka",
-        number: "555-7777"
-    },
-    {
-        id: 2,
-        name: "Iines Ankka",
-        number: "122363-988"
-    },
-    {
-        id: 3,
-        name: "Hau Koira",
-        number: "11-444-77733"
-    },
-    {
-        id: 4,
-        name: "Miu Kissa",
-        number: "88-999-88"
-    },
-    {
-        id: 5,
-        name: "Ahven Kala",
-        number: "000-777"
-    }
-]
+// Morgan loppuu
 
 app.get('/', (req, res) => {
     res.send('<h1>Riikan eka Node-sovellus!</h1>')
@@ -98,10 +72,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
         })
         .catch(error => next(error))
 })
-
-const generateId = () => {
-    return Math.floor(Math.random() * (9999 - 1) + 1);
-}
 
 // Henkilön lisääminen
 app.post('/api/persons', (request, response) => {
