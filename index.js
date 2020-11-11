@@ -90,7 +90,11 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
         .then(result => {
-            response.status(204).end()
+            if (result) {
+                response.status(204).end()
+            } else {
+                response.status(404).end()
+            }
         })
         .catch(error => next(error))
 })
@@ -116,6 +120,7 @@ app.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
         response.json(savedPerson)
     })
+        .catch(error => next(error))
 
     /*
     if (!body.name || !body.number) {
@@ -141,7 +146,11 @@ app.put('/api/persons/:id', (request, response, next) => {
 
     Person.findByIdAndUpdate(request.params.id, person, { new: true })
         .then(updatedPerson => {
-            response.json(updatedPerson)
+            if (updatedPerson !== null) {
+                response.json(updatedPerson)
+            } else {
+                response.status(404).end()
+            }
         })
         .catch(error => next(error))
 })
