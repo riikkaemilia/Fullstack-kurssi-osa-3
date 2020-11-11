@@ -74,13 +74,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 // Henkilön lisääminen
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     // const nameExists = persons.some(person => person.name === body.name)
-
-    if (body.name === undefined) {
-        return response.status(400).json({ error: 'Name missing' })
-    }
 
     const person = new Person({
         name: body.name,
@@ -88,7 +84,7 @@ app.post('/api/persons', (request, response) => {
     })
 
     person.save().then(savedPerson => {
-        response.json(savedPerson)
+        response.json(savedPerson.toJSON())
     })
         .catch(error => next(error))
 
@@ -131,6 +127,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
