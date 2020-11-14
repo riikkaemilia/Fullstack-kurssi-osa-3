@@ -76,7 +76,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
 // Henkilön lisääminen
 app.post('/api/persons', (request, response, next) => {
     const body = request.body
-    // const nameExists = persons.some(person => person.name === body.name)
 
     const person = new Person({
         name: body.name,
@@ -87,18 +86,6 @@ app.post('/api/persons', (request, response, next) => {
         response.json(savedPerson.toJSON())
     })
         .catch(error => next(error))
-
-    /*
-    if (!body.name || !body.number) {
-        return response.status(400).json({
-            error: 'name and/or number missing'
-        })
-    } else if (nameExists) {
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
-    */
 })
 
 // Sisällön muokkaaminen
@@ -110,12 +97,12 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: body.number,
     }
 
-    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
-            if (updatedPerson !== null) {
-                response.json(updatedPerson)
-            } else {
+            if (updatedPerson === null) {
                 response.status(404).end()
+            } else {
+                response.json(updatedPerson)
             }
         })
         .catch(error => next(error))
